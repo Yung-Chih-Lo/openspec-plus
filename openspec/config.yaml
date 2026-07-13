@@ -1,0 +1,4 @@
+schema: spec-driven
+
+# Add only stable, project-specific artifact context or rules here.
+# Runtime workflow policy belongs in opsxp.yaml.

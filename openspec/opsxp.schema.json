@@ -1,0 +1,311 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OPSXP Project Contract",
+  "type": "object",
+  "required": [
+    "version",
+    "contract_schema",
+    "project_slug",
+    "git",
+    "task_integration",
+    "pr",
+    "command_discovery",
+    "stack",
+    "commands",
+    "verification"
+  ],
+  "properties": {
+    "version": {
+      "const": 3
+    },
+    "contract_schema": {
+      "const": "openspec/opsxp.schema.json"
+    },
+    "project_slug": {
+      "type": "string",
+      "minLength": 1
+    },
+    "git": {
+      "type": "object",
+      "required": [
+        "required",
+        "pr_target_branch",
+        "branch_prefix",
+        "auto_commit",
+        "auto_push",
+        "sync_target_before_ff"
+      ],
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "pr_target_branch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "branch_prefix": {
+          "type": "string"
+        },
+        "auto_commit": {
+          "type": "boolean"
+        },
+        "auto_push": {
+          "$ref": "#/$defs/auto_push"
+        },
+        "sync_target_before_ff": {
+          "type": "boolean"
+        }
+      }
+    },
+    "task_integration": {
+      "type": "object",
+      "required": [
+        "notion_enabled",
+        "task_link_required_on_ff",
+        "task_id_property",
+        "writeback_on_archive"
+      ],
+      "properties": {
+        "notion_enabled": {
+          "type": "boolean"
+        },
+        "task_link_required_on_ff": {
+          "type": "boolean"
+        },
+        "task_id_property": {
+          "type": "string",
+          "minLength": 1
+        },
+        "writeback_on_archive": {
+          "type": "boolean"
+        }
+      }
+    },
+    "pr": {
+      "type": "object",
+      "required": [
+        "draft_on_ff",
+        "title_task_prefix",
+        "body_task_link",
+        "metadata_artifact",
+        "metadata_schema"
+      ],
+      "properties": {
+        "draft_on_ff": {
+          "type": "boolean"
+        },
+        "title_task_prefix": {
+          "type": "string"
+        },
+        "body_task_link": {
+          "type": "string"
+        },
+        "metadata_artifact": {
+          "oneOf": [
+            {
+              "const": false
+            },
+            {
+              "type": "string",
+              "pattern": "^openspec/changes/\\{change\\}/.+"
+            }
+          ]
+        },
+        "metadata_schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "command_discovery": {
+      "type": "object",
+      "required": [
+        "mode",
+        "roots",
+        "prefer",
+        "profiles",
+        "monorepo_roots"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "auto",
+            "manual"
+          ]
+        },
+        "roots": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "prefer": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "profiles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "monorepo_roots": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "stack": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "commands": {
+      "type": "object",
+      "required": [
+        "test_affected",
+        "verify"
+      ],
+      "properties": {
+        "test_affected": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/affected_command"
+          }
+        },
+        "verify": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/verify_command"
+          }
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "required": [
+        "apply_full_suite",
+        "required_commands",
+        "archive_requires_ready_evidence",
+        "evidence_artifact",
+        "evidence_schema",
+        "hash_algorithm"
+      ],
+      "properties": {
+        "apply_full_suite": {
+          "const": "never"
+        },
+        "required_commands": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/command_id"
+          }
+        },
+        "archive_requires_ready_evidence": {
+          "const": true
+        },
+        "evidence_artifact": {
+          "type": "string",
+          "pattern": "^openspec/changes/\\{change\\}/.+"
+        },
+        "evidence_schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hash_algorithm": {
+          "const": "sha256"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "auto_push": {
+      "enum": [
+        "manual",
+        "when_pr_active",
+        "always"
+      ]
+    },
+    "command_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "affected_command": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "run",
+        "cwd"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/command_id"
+        },
+        "run": {
+          "type": "string",
+          "minLength": 1,
+          "not": {
+            "const": "<not configured>"
+          }
+        },
+        "cwd": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "verify_command": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "run",
+        "cwd",
+        "covers"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/command_id"
+        },
+        "run": {
+          "type": "string",
+          "minLength": 1,
+          "not": {
+            "const": "<not configured>"
+          }
+        },
+        "cwd": {
+          "type": "string",
+          "minLength": 1
+        },
+        "covers": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          }
+        }
+      }
+    }
+  }
+}

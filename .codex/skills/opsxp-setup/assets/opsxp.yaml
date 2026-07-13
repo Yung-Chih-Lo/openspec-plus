@@ -1,0 +1,58 @@
+# Canonical OPSXP v3 bootstrap contract.
+version: 3
+contract_schema: "openspec/opsxp.schema.json"
+project_slug: project-template
+
+git:
+  required: false
+  pr_target_branch: main
+  branch_prefix: change/
+  auto_commit: true
+  # manual | when_pr_active | always
+  auto_push: when_pr_active
+  sync_target_before_ff: true
+
+task_integration:
+  notion_enabled: false
+  task_link_required_on_ff: false
+  task_id_property: "ID"
+  writeback_on_archive: true
+
+pr:
+  draft_on_ff: true
+  title_task_prefix: "[{task_id}]"
+  body_task_link: "Completes {task_id}"
+  # Set to false to disable persisted cross-session task/PR linkage.
+  metadata_artifact: "openspec/changes/{change}/.pr-info.json"
+  metadata_schema: "openspec/pr-info.schema.json"
+
+command_discovery:
+  mode: auto
+  roots:
+    - "."
+  prefer:
+    - Makefile
+    - package.json
+    - pyproject.toml
+    - CI
+  profiles:
+    - fastapi-python
+    - react-vite
+    - nextjs
+  monorepo_roots: []
+
+stack: []
+
+# Setup adds one entry per package, or one proven aggregate command without duplicates.
+commands:
+  test_affected: []
+  verify: []
+
+verification:
+  apply_full_suite: never
+  # Exact command IDs from commands.verify. An empty list is explicit and must be reported.
+  required_commands: []
+  archive_requires_ready_evidence: true
+  evidence_artifact: "openspec/changes/{change}/.verification/latest.json"
+  evidence_schema: "openspec/verification-evidence.schema.json"
+  hash_algorithm: sha256

@@ -1,0 +1,4 @@
+interface:
+  display_name: "OPSXP Doctor"
+  short_description: "Check OPSXP setup health."
+  default_prompt: "Run an OPSXP doctor check on this project and report confirmed setup issues, healthy surfaces, and smallest next actions."

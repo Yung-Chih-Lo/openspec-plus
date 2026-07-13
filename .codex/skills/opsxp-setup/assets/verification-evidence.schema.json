@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OPSXP Verification Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "change",
+    "verdict",
+    "source",
+    "commands",
+    "findings",
+    "generated_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "change": {
+      "type": "string",
+      "minLength": 1
+    },
+    "verdict": {
+      "enum": [
+        "READY",
+        "BLOCKED"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "git_head",
+        "working_tree_status",
+        "hash_algorithm",
+        "contract_fingerprint",
+        "artifact_fingerprint",
+        "implementation_fingerprint",
+        "files"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "git",
+            "files"
+          ]
+        },
+        "git_head": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40,64}$"
+            }
+          ]
+        },
+        "working_tree_status": {
+          "enum": [
+            "clean",
+            "dirty",
+            "unavailable"
+          ]
+        },
+        "hash_algorithm": {
+          "const": "sha256"
+        },
+        "contract_fingerprint": {
+          "$ref": "#/$defs/sha256"
+        },
+        "artifact_fingerprint": {
+          "$ref": "#/$defs/sha256"
+        },
+        "implementation_fingerprint": {
+          "$ref": "#/$defs/sha256"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/file_digest"
+          }
+        }
+      }
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/command_result"
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "verdict": {
+            "const": "READY"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "commands": {
+            "not": {
+              "contains": {
+                "type": "object",
+                "required": [
+                  "required",
+                  "status"
+                ],
+                "properties": {
+                  "required": {
+                    "const": true
+                  },
+                  "status": {
+                    "enum": [
+                      "FAIL",
+                      "SKIPPED"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "findings": {
+            "not": {
+              "contains": {
+                "type": "object",
+                "required": [
+                  "severity"
+                ],
+                "properties": {
+                  "severity": {
+                    "const": "BLOCKING"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "file_digest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "scope",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "enum": [
+            "artifact",
+            "implementation"
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "command_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "covers",
+        "command",
+        "cwd",
+        "required",
+        "status",
+        "exit_code"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "covers": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cwd": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "SKIPPED"
+          ]
+        },
+        "exit_code": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "severity",
+        "message"
+      ],
+      "properties": {
+        "severity": {
+          "enum": [
+            "BLOCKING",
+            "WARNING",
+            "INFO"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

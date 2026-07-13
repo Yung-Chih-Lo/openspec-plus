@@ -1,0 +1,4 @@
+interface:
+  display_name: "OPSXP Sync"
+  short_description: "Sync OPSXP branches safely after archive."
+  default_prompt: "Sync this OPSXP repository with its remote target branch, prune stale refs, and report safe branch cleanup actions."

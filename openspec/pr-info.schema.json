@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OPSXP PR Metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "change",
+    "project_slug",
+    "task",
+    "git",
+    "pr"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "change": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_slug": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/notion_task"
+        }
+      ]
+    },
+    "git": {
+      "$ref": "#/$defs/git_link"
+    },
+    "pr": {
+      "$ref": "#/$defs/pr_link"
+    }
+  },
+  "$defs": {
+    "notion_task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "id",
+        "page_id",
+        "url"
+      ],
+      "properties": {
+        "provider": {
+          "const": "notion"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "page_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "git_link": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "branch",
+        "target_branch"
+      ],
+      "properties": {
+        "branch": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "target_branch": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "pr_link": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "number",
+        "url"
+      ],
+      "properties": {
+        "number": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "url": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "format": "uri"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

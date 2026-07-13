@@ -1,0 +1,17 @@
+OPSXP is an independent workflow layer maintained by Yung-Chih-Lo.
+
+OPSXP depends on OpenSpec but does not vendor OpenSpec's official skills.
+Install the compatible upstream CLI with:
+
+  npm install -g @fission-ai/openspec@1.6.0
+
+OpenSpec
+Copyright 2024 OpenSpec Contributors
+https://github.com/Fission-AI/OpenSpec
+License: MIT
+
+The `.claude/skills/opsxp-*` files in this repository are retained solely as
+the previous OPSXP rollback baseline. They are not the active workflow.
+
+Other local development skills are intentionally excluded from the public
+distribution of this repository.

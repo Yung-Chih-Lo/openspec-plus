@@ -1,0 +1,4 @@
+interface:
+  display_name: "OPSXP Debug"
+  short_description: "Diagnose failures before choosing a fix path."
+  default_prompt: "Use $opsxp-debug to diagnose this failure, prove the likely root cause, and recommend the narrow OPSXP next step without editing code."
