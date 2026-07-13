@@ -177,6 +177,13 @@ test("public distribution states compatibility and excludes unrelated skills", (
   const workflow = read(".github/workflows/validate.yml");
 
   assert.match(readme, /@fission-ai\/openspec@1\.6\.0/);
+  assert.match(readme, /openspec (status|validate|archive)/i);
+  assert.match(readme, /Do \*\*not\*\* run `openspec init`/);
+  assert.doesNotMatch(readme, /^\s*openspec init\s*$/m);
+  assert.match(
+    readme,
+    /git clone https:\/\/github\.com\/Yung-Chih-Lo\/openspec-plus\.git/,
+  );
   assert.match(readme, /\.claude\/skills\/opsxp-\*/);
   assert.match(readme, /Notion/i);
   assert.match(notice, /OpenSpec/i);

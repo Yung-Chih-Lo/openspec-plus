@@ -37,19 +37,29 @@ Archive never merges or waits for merge. The human-controlled GitHub merge is th
 
 ## Installation
 
-1. Create a repository from this template, or copy the OPSXP files into an existing OpenSpec project.
-2. Install the upstream OpenSpec CLI pinned to the compatible version:
+1. Install the upstream OpenSpec CLI pinned to the compatible version:
 
    ```bash
    npm install -g @fission-ai/openspec@1.6.0
-   openspec init
+   openspec --version
    ```
+
+   OPSXP uses this CLI for official operations such as `openspec status`, `openspec validate`, and `openspec archive`. It does not vendor or replace the upstream CLI.
+
+2. Start your project from OPSXP. Use GitHub's **Use this template** button, or clone this repository:
+
+   ```bash
+   git clone https://github.com/Yung-Chih-Lo/openspec-plus.git <project-name>
+   cd <project-name>
+   ```
+
+   Do **not** run `openspec init` after creating or cloning an OPSXP project. This template already provides the `openspec/` contract and active OPSXP skills; `openspec init` generates upstream OpenSpec artifacts and skills that are intentionally not part of this repository.
 
 3. Make the active `.codex/skills/opsxp-*` skills available to your coding agent.
 4. Run `opsxp-setup` once per project. It discovers project commands and writes `openspec/opsxp.yaml`, `openspec/opsxp.schema.json`, `openspec/pr-info.schema.json`, and `openspec/verification-evidence.schema.json`.
 5. Use the workflow in order: `opsxp-explore`, `opsxp-ff`, `opsxp-apply`, `opsxp-verify`, and `opsxp-archive`. Use `opsxp-update` only when the plan must change.
 
-Read the upstream [OpenSpec getting-started guide](https://github.com/Fission-AI/OpenSpec/blob/main/docs/getting-started.md) for OpenSpec commands, change artifacts, and CLI updates.
+Read the upstream [OpenSpec getting-started guide](https://github.com/Fission-AI/OpenSpec/blob/main/docs/getting-started.md) for CLI commands, change artifacts, and CLI updates. In an OPSXP checkout, skip its initialization step.
 
 ## Optional Notion and GitHub linkage
 
