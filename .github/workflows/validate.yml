@@ -15,4 +15,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: node --test tests/opsxp-workflow-contract.test.mjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: npm install --global @fission-ai/openspec@1.6.0
+      - run: node --test tests/*.test.mjs

@@ -24,7 +24,7 @@ Setup -> Explore -> FF -> Apply <-> Update -> Verify -> Archive -> human merge
 
 | Stage | Responsibility |
 | --- | --- |
-| Setup | Creates or refreshes the project-specific `openspec/opsxp.yaml` v3 contract and schemas from repository evidence. |
+| Setup | Creates or refreshes project docs, the `openspec/opsxp.yaml` v3 contract, schemas, and command profile from repository evidence. |
 | Explore | Read-only Socratic discovery. It reports evidence-backed `Clarity: N/5` before planning. |
 | FF | Creates the smallest apply-ready OpenSpec change, branch, optional task linkage, metadata, and draft PR. One task is valid. |
 | Apply | Uses minimal RED -> GREEN proof. It runs only the selected test or affected/unit commands, never the full release profile or E2E. |
@@ -55,11 +55,32 @@ Archive never merges or waits for merge. The human-controlled GitHub merge is th
 
    Do **not** run `openspec init` after creating or cloning an OPSXP project. This template already provides the `openspec/` contract and active OPSXP skills; `openspec init` generates upstream OpenSpec artifacts and skills that are intentionally not part of this repository.
 
-3. Make the active `.codex/skills/opsxp-*` skills available to your coding agent.
-4. Run `opsxp-setup` once per project. It discovers project commands and writes `openspec/opsxp.yaml`, `openspec/opsxp.schema.json`, `openspec/pr-info.schema.json`, and `openspec/verification-evidence.schema.json`.
-5. Use the workflow in order: `opsxp-explore`, `opsxp-ff`, `opsxp-apply`, `opsxp-verify`, and `opsxp-archive`. Use `opsxp-update` only when the plan must change.
+3. For a new application, scaffold one stack using the recipes below. Existing applications keep their current layout.
+4. Make the active `.codex/skills/opsxp-*` skills available to your coding agent.
+5. Run `opsxp-setup` once per project. It bootstraps project docs, discovers commands, and writes the OPSXP contract and schemas.
+6. Use the workflow in order: `opsxp-explore`, `opsxp-ff`, `opsxp-apply`, `opsxp-verify`, and `opsxp-archive`. Use `opsxp-update` only when the plan must change.
 
 Read the upstream [OpenSpec getting-started guide](https://github.com/Fission-AI/OpenSpec/blob/main/docs/getting-started.md) for CLI commands, change artifacts, and CLI updates. In an OPSXP checkout, skip its initialization step.
+
+## Scaffold an application
+
+OPSXP intentionally ships without an application framework, dependency manifest, or lockfile. After cloning, choose only the stack the project needs, scaffold it with the upstream tool, then run `opsxp-setup` so commands come from the generated manifests and CI.
+
+Recommended package roots are `apps/web` for one frontend and `apps/api` for a separate backend:
+
+The examples use pnpm; use the package manager selected for the project.
+
+```bash
+# Next.js
+pnpm create next-app@latest apps/web --yes
+
+# React with Vite
+pnpm create vite@latest apps/web --template react-ts
+```
+
+Do not generate both Next.js and Vite unless the product genuinely has two web applications. For an API-only FastAPI project, scaffold `apps/api` with the project's chosen Python package manager and current [FastAPI guidance](https://fastapi.tiangolo.com/). For the opinionated FastAPI + React/Vite + shadcn stack, use the official [Full Stack FastAPI Template](https://github.com/fastapi/full-stack-fastapi-template) as the application scaffold source rather than vendoring it into OPSXP.
+
+On first setup, OPSXP replaces the template `docs/README.md` and creates truthful `docs/01-prd.md` and `docs/02-architecture.md`. API, deployment, operations, and decision docs are added only when those concerns exist.
 
 ## Optional Notion and GitHub linkage
 
@@ -94,10 +115,10 @@ After Archive, OPSXP writes the six-section implementation summary back to Notio
 The repository verifies its workflow contract with:
 
 ```bash
-node --test tests/opsxp-workflow-contract.test.mjs
+node --test tests/*.test.mjs
 ```
 
-The GitHub Actions workflow runs the same test on pushes and pull requests.
+The suite covers the written contract, fixture-based FastAPI/Vite/Next.js/monorepo command discovery, and a real OpenSpec 1.6.0 `validate -> archive -> validate` smoke flow. GitHub Actions installs the pinned CLI and runs the same suite on pushes and pull requests.
 
 ## License
 

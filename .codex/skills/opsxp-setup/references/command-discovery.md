@@ -2,6 +2,8 @@
 
 Use current files, not framework assumptions, to build the smallest non-duplicated command profile.
 
+Run the bundled discovery helper first. It reads manifests, lockfiles, Makefile targets, and CI without executing project commands. Treat its JSON as candidates: confirm each command against current repo evidence, resolve every reported gap, and use the manual rules below when a supported file could not be parsed.
+
 ## Priority
 
 1. Prefer a documented Makefile target or workspace script that CI also uses.
@@ -23,7 +25,7 @@ Use stable lowercase IDs. `covers` may contain `lint`, `typecheck`, `test_full`,
 
 ## FastAPI and Python
 
-- Detect FastAPI from project dependencies; detect pytest separately from dependencies, config, test directories, Makefile, or CI.
+- Detect FastAPI from project dependencies; detect pytest separately from dependencies, pytest config, Makefile, or CI. A `tests/` directory alone does not prove the runner.
 - Prefer an existing target such as `make test-backend`. Otherwise select the runner proven by the project: `uv run pytest -q`, `poetry run pytest -q`, a documented virtualenv command, or `python -m pytest -q`.
 - Add Ruff, Mypy, Pyright, packaging, Docker, security, or migration checks only when configured or used by CI.
 - Do not invent a Python build command for an application that has no package or image build gate.

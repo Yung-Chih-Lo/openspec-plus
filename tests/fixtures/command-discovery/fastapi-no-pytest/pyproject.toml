@@ -1,0 +1,3 @@
+[project]
+name = "fixture-api-without-pytest"
+dependencies = ["fastapi>=0.115"]

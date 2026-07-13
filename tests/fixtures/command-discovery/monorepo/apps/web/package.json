@@ -1,0 +1,14 @@
+{
+  "name": "fixture-monorepo-web",
+  "private": true,
+  "packageManager": "pnpm@10.0.0",
+  "scripts": {
+    "build": "vite build"
+  },
+  "dependencies": {
+    "react": "latest"
+  },
+  "devDependencies": {
+    "vite": "latest"
+  }
+}

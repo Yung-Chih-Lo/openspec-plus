@@ -73,6 +73,56 @@ test("Setup can bootstrap and migrate the complete v3 contract", () => {
   assert.match(skill, /Preserve.*unknown future contract keys/i);
   assert.match(skill, /migrate.*v2.*v3/i);
   assert.match(skill, /references\/command-discovery\.md/);
+  assert.match(skill, /scripts\/discover-command-profile\.mjs/);
+  assert.match(skill, /assets\/docs/);
+  assert.match(skill, /docs\/01-prd\.md/);
+  assert.match(skill, /docs\/02-architecture\.md/);
+  assert.match(skill, /Never write unresolved `\{\{\.\.\.\}\}` markers/);
+  assert.match(skill, /Do not install or scaffold FastAPI, Vite, Next\.js/);
+});
+
+test("AGENTS is a compact routing map instead of a workflow encyclopedia", () => {
+  const agents = read("AGENTS.md");
+
+  assert.ok(agents.split("\n").length <= 100, "AGENTS.md should stay compact");
+  assert.match(agents, /docs\/README\.md.*非 trivial 工作先讀/);
+  assert.match(agents, /openspec\/opsxp\.yaml/);
+  assert.match(agents, /\.codex\/skills\/opsxp-\*/);
+  assert.match(agents, /可判定的規則應移到 schema、test、lint 或 CI/);
+  assert.doesNotMatch(agents, /## OPSXP 主流程/);
+  assert.doesNotMatch(agents, /## 專案快照/);
+});
+
+test("docs bootstrap is truthful and application frameworks stay external", () => {
+  const docsIndex = read("docs/README.md");
+  const setup = read(".codex/skills/opsxp-setup/SKILL.md");
+  const readme = read("README.md");
+
+  assert.match(docsIndex, /仍是 OPSXP template/);
+  assert.match(docsIndex, /不要留下空白 placeholder/);
+  assert.doesNotMatch(docsIndex, /\{\{/);
+  for (const name of ["README.md", "01-prd.md", "02-architecture.md"]) {
+    assert.equal(
+      existsSync(join(root, ".codex", "skills", "opsxp-setup", "assets", "docs", name)),
+      true,
+      name,
+    );
+  }
+  assert.match(setup, /Preserve authored docs/);
+  assert.match(readme, /intentionally ships without an application framework/);
+  assert.match(readme, /create next-app@latest apps\/web/);
+  assert.match(readme, /create vite@latest apps\/web/);
+  assert.match(readme, /Full Stack FastAPI Template/);
+
+  for (const path of [
+    "package.json",
+    "pyproject.toml",
+    "frontend",
+    "backend",
+    "apps",
+  ]) {
+    assert.equal(existsSync(join(root, path)), false, `${path} must stay external`);
+  }
 });
 
 test("OPSXP and verification evidence have bundled machine-readable schemas", () => {
@@ -190,7 +240,8 @@ test("public distribution states compatibility and excludes unrelated skills", (
   assert.match(read("LICENSE"), /MIT License/);
   assert.match(ignore, /^\/\.codex\/skills\/fastapi-templates\/$/m);
   assert.match(ignore, /^\/\.claude\/skills\/fastapi-templates\/$/m);
-  assert.match(workflow, /node --test tests\/opsxp-workflow-contract\.test\.mjs/);
+  assert.match(workflow, /@fission-ai\/openspec@1\.6\.0/);
+  assert.match(workflow, /node --test tests\/\*\.test\.mjs/);
 });
 
 test("deprecated follow-up and closeout phases are absent", () => {

@@ -1,0 +1,6 @@
+[project]
+name = "fixture-monorepo-api"
+dependencies = ["fastapi>=0.115", "pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
